@@ -1,0 +1,1 @@
+const AI_API_KEY = "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";

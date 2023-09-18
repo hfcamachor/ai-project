@@ -2,6 +2,7 @@
 
 # dependencies
 /frontend/node_modules
+/backend/node_modules
 /frontend/.pnp
 .pnp.js
 
@@ -26,6 +27,7 @@
 
 # local env files
 /frontend/.env*.local
+/backend/.env
 
 # vercel
 /frontend/.vercel
@@ -33,3 +35,9 @@
 # typescript
 /frontend/*.tsbuildinfo
 /frontend/next-env.d.ts
+
+# lock
+/frontend/yarn.lock
+/frontend/package-lock
+/backend/yarn.lock
+/backend/package-lock

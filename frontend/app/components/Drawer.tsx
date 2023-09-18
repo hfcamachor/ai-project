@@ -15,9 +15,11 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import MailIcon from "@mui/icons-material/Mail";
 import MenuIcon from "@mui/icons-material/Menu";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import InputWithIcon from "./Input";
+import Button from "@mui/material/Button";
 
 const drawerWidth = 240;
 
@@ -35,6 +37,31 @@ export default function ResponsiveDrawer(props: Props) {
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  const getMessages = async () => {
+    console.log("getMessages")
+
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message: "How are you?",
+      }),
+    };
+
+    try {
+      const response = await fetch(
+        "http://localhost:8000/completions",
+        options
+      );
+      const data = await response.json();
+      console.log("data", data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const drawer = (
@@ -80,7 +107,7 @@ export default function ResponsiveDrawer(props: Props) {
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
-          backgroundColor: "#166b4c"
+          backgroundColor: "#166b4c",
         }}
       >
         <Toolbar>
@@ -139,11 +166,11 @@ export default function ResponsiveDrawer(props: Props) {
       <Box
         sx={{
           display: "flex",
-					flexDirection: "column",
-					justifyContent: "space-between",
-					height: "100vh",
-					p: 3,
-          width: "100%"
+          flexDirection: "column",
+          justifyContent: "space-between",
+          height: "100vh",
+          p: 3,
+          width: "100%",
         }}
       >
         <Box
@@ -151,8 +178,8 @@ export default function ResponsiveDrawer(props: Props) {
           sx={{
             flexGrow: 1,
             p: 3,
-						maxHeight: "calc(100vh - 40px)",
-						overflow: "auto"
+            maxHeight: "calc(100vh - 40px)",
+            overflow: "auto",
           }}
         >
           <Toolbar />
@@ -160,7 +187,16 @@ export default function ResponsiveDrawer(props: Props) {
             donec massa sapien faucibus et molestie ac.
           </Typography>
         </Box>
-        <InputWithIcon />
+        <Box
+          sx={{
+            display: "flex",
+          }}
+        >
+          <InputWithIcon />
+          <Button onClick={getMessages} variant="contained">
+            <ArrowForwardIosIcon />
+          </Button>
+        </Box>
       </Box>
     </Box>
   );
