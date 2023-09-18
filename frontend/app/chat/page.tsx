@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -18,8 +17,10 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import InputWithIcon from "./Input";
+import InputWithIcon from "../components/Input";
 import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import { useState } from "react";
 
 const drawerWidth = 240;
 
@@ -31,16 +32,25 @@ interface Props {
   window?: () => Window;
 }
 
-export default function ResponsiveDrawer(props: Props) {
+interface conversation {
+  botMessage: string;
+  userMessage: string;
+}
+
+export default function ChatAi(props: Props) {
   const { window } = props;
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState(false);
+  const [inputMessage, setInputMessage] = useState("");
+  const [conversation, setConversation] = useState<conversation[]>([]);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
   const getMessages = async () => {
-    console.log("getMessages")
+    setLoadingMessage(true);
+    setInputMessage("");
 
     const options = {
       method: "POST",
@@ -48,7 +58,7 @@ export default function ResponsiveDrawer(props: Props) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        message: "How are you?",
+        message: inputMessage,
       }),
     };
 
@@ -58,8 +68,18 @@ export default function ResponsiveDrawer(props: Props) {
         options
       );
       const data = await response.json();
-      console.log("data", data);
+      const dataMessage = data.choices[0].message.content;
+
+      setConversation([
+        ...conversation,
+        {
+          botMessage: dataMessage,
+          userMessage: inputMessage,
+        },
+      ]);
+      setLoadingMessage(false);
     } catch (error) {
+      setLoadingMessage(false);
       console.log(error);
     }
   };
@@ -183,17 +203,41 @@ export default function ResponsiveDrawer(props: Props) {
           }}
         >
           <Toolbar />
-          <Typography paragraph>
-            donec massa sapien faucibus et molestie ac.
-          </Typography>
+          <div>
+            {conversation.map((message, index) => {
+              return (
+                <div key={index}>
+                  <Typography mt={3} variant="subtitle2" gutterBottom>
+                    <strong>{message.userMessage}</strong>
+                  </Typography>
+                  <Typography pl={2} variant="body1" gutterBottom>
+                    {message.botMessage}
+                  </Typography>
+                </div>
+              );
+            })}
+            {loadingMessage && (
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <CircularProgress color="success" />
+              </Box>
+            )}
+          </div>
         </Box>
         <Box
           sx={{
             display: "flex",
           }}
         >
-          <InputWithIcon />
-          <Button onClick={getMessages} variant="contained">
+          <InputWithIcon
+            inputChange={setInputMessage}
+            inputMessage={inputMessage}
+            handleKeyPress={getMessages}
+          />
+          <Button
+            disabled={!inputMessage}
+            onClick={getMessages}
+            variant="contained"
+          >
             <ArrowForwardIosIcon />
           </Button>
         </Box>

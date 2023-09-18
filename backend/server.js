@@ -19,7 +19,7 @@ app.post("/completions", async (req, res) => {
       messages: [
         {
           role: "user",
-          content: "How are you?",
+          content: req.body.message,
         },
       ],
       "max_tokens": 100,
