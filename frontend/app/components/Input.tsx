@@ -6,11 +6,13 @@ import { Dispatch, KeyboardEvent, SetStateAction } from "react";
 export default function InputWithIcon({
   inputChange,
   inputMessage,
-  handleKeyPress
+  handleKeyPress,
+  error,
 }: {
   inputChange: Dispatch<SetStateAction<string>>;
   handleKeyPress: () => void,
   inputMessage: string;
+  error?: boolean
 }) {
 
   const handleInputKeyPress = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -30,11 +32,11 @@ export default function InputWithIcon({
     >
       <AccountCircle sx={{ color: "action.active", mr: 1, my: 0.5 }} />
       <TextField
+        error={error}
         sx={{
           width: "100%",
         }}
         id="input-with-sx"
-        label="With sx"
         variant="standard"
         value={inputMessage}
         onChange={(e) => inputChange(e.target.value)}
